@@ -1,0 +1,122 @@
+---
+
+substitutions:
+  name: sonoff-s31
+  friendly_name: sonoff-s31
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  project: 
+    name: potatop.sonoff_s31
+    version: 1.0.0
+
+esp8266:
+  board: esp01_1m
+
+logger:
+  baud_rate: 0 # (UART logging interferes with cse7766)
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://potatop/special-doodle/sonoff-s31.yaml
+  import_full_config: False
+
+uart:
+  rx_pin: RX
+  baud_rate: 4800
+  
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP"
+      icon: "mdi:ip-outline"
+    ssid:
+      name: "SSID"
+      icon: "mdi:wifi-settings"
+    bssid:
+      name: "BSSID"
+      icon: "mdi:wifi-settings"
+    mac_address:
+      name: "MAC"
+      icon: "mdi:network-outline"
+    scan_results:
+      name: "Wifi Scan"
+      icon: "mdi:wifi-refresh"
+      disabled_by_default: True
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - switch.toggle: relay
+  - platform: status
+    name: "Status"
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+  - platform: cse7766
+    current:
+      name: "Current"
+      accuracy_decimals: 1
+      device_class: current
+      unit_of_measurement: A
+    voltage:
+      name: "Voltage"
+      accuracy_decimals: 1
+      device_class: voltage 
+      unit_of_measurement: V
+    power:
+      name: "Power"
+      accuracy_decimals: 1
+      id: my_power
+      device_class: energy  
+      unit_of_measurement: W    
+  - platform: total_daily_energy
+    name: "Total Daily Energy"
+    accuracy_decimals: 1
+    power_id: my_power
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    state_class: total_increasing
+    device_class: energy
+    
+switch:
+  - platform: gpio
+    name: "Relay"
+    icon: "mdi:power-socket-us"
+    pin: GPIO12
+    id: relay
+    restore_mode: RESTORE_DEFAULT_ON
+#   restore_mode: Control how the relay attempts to restore state on bootup.
+#   RESTORE_DEFAULT_OFF          - Attempt to restore state and default to OFF if not possible to restore.
+#   RESTORE_DEFAULT_ON           - Attempt to restore state and default to ON.
+#   RESTORE_INVERTED_DEFAULT_OFF - Attempt to restore state inverted from the previous state and default to OFF.
+#   RESTORE_INVERTED_DEFAULT_ON  - Attempt to restore state inverted from the previous state and default to ON.
+#   ALWAYS_OFF                   - Always initialize the pin as OFF on bootup.
+#   ALWAYS_ON                    - Always initialize the pin as ON on bootup.
+
+time:
+  - platform: sntp
+    id: my_time
+
+status_led:
+  pin: GPIO13
