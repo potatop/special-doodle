@@ -21,6 +21,12 @@ dashboard_import:
   package_import_url: github://potatop/special-doodle/ag-basic.yaml
   import_full_config: false
 
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP
+      id: esp_ip_address
+
 packages:
   board: github://MallocArray/airgradient_esphome/packages/airgradient_d1_mini_board.yaml
   pm_2.5: github://MallocArray/airgradient_esphome/packages/sensor_pms5003_extended_life.yaml
