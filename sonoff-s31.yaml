@@ -1,15 +1,15 @@
 ---
-
 substitutions:
   name: sonoff-s31
   friendly_name: sonoff-s31
+  config_version: 1.1.0
 
 esphome:
   name: "${name}"
   friendly_name: "${friendly_name}"
-  project: 
+  project:
     name: potatop.sonoff_s31
-    version: 1.0.0
+    version: "$config_version"
 
 esp8266:
   board: esp01_1m
@@ -35,7 +35,7 @@ dashboard_import:
 uart:
   rx_pin: RX
   baud_rate: 4800
-  
+
 text_sensor:
   - platform: wifi_info
     ip_address:
@@ -74,23 +74,43 @@ sensor:
   - platform: cse7766
     current:
       name: "Current"
-      accuracy_decimals: 1
-      device_class: current
-      unit_of_measurement: A
+      accuracy_decimals: 2
+      # device_class: current
+      # unit_of_measurement: A
+      filters:
+        - throttle_average: 60s
     voltage:
       name: "Voltage"
-      accuracy_decimals: 1
-      device_class: voltage 
-      unit_of_measurement: V
+      accuracy_decimals: 2
+      # device_class: voltage
+      # unit_of_measurement: V
+      filters:
+        - throttle_average: 60s
     power:
       name: "Power"
-      accuracy_decimals: 1
+      accuracy_decimals: 2
       id: my_power
-      device_class: energy  
-      unit_of_measurement: W    
+      # device_class: energy
+      # unit_of_measurement: W
+      filters:
+        - throttle_average: 60s
+    energy:
+      name: "Energy"
+      accuracy_decimals: 2
+      filters:
+        - throttle: 60s
+    apparent_power: #(only available with version 2024.3.0 or greater)
+      name: "Apparent Power"
+      filters:
+        - throttle_average: 60s
+    power_factor: #(only available with version 2024.3.0 or greater)
+      name: "Power Factor"
+      accuracy_decimals: 2
+      filters:
+        - throttle_average: 60s
   - platform: total_daily_energy
     name: "Total Daily Energy"
-    accuracy_decimals: 1
+    accuracy_decimals: 2
     power_id: my_power
     filters:
       # Multiplication factor from W to kW is 0.001
@@ -98,7 +118,7 @@ sensor:
     unit_of_measurement: kWh
     state_class: total_increasing
     device_class: energy
-    
+
 switch:
   - platform: gpio
     name: "Relay"

@@ -5,13 +5,13 @@
 substitutions:
   name: "ag-basic"
   friendly_name: "AG Basic"
-  config_version: 2.0.1
-  name_add_mac_suffix: "false"  # Must have quotes around value
+  config_version: 2.0.2
+  name_add_mac_suffix: "false" # Must have quotes around value
 
 # Enable Home Assistant API
-api:  # Add encryption key as desired
+api: # Add encryption key as desired
 
-ota:  # Add password as desired
+ota: # Add password as desired
 
 wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
